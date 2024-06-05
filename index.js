@@ -21,6 +21,10 @@ function spawnPty(dc, accountId, msgId) {
 			[0x4f].concat(Array.from(encoded)),
 		);
 	});
+	ptyProcess.onExit(async () => {
+		// 'E' = exit
+		await dc.rpc.sendWebxdcRealtimeData(accountId, msgId, [0x45])
+	});
 
 	ptys[msgId] = ptyProcess;
 }

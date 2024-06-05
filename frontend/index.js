@@ -24,6 +24,8 @@ function receiveUpdate(msg) {
 	if (msg[0] == 0x4f) {
 		// 0x4f = 'O' = Output
 		term.write(msg.slice(1));
+	} else if (msg[0] == 0x45) {
+		term.dispose()
 	}
 }
 
