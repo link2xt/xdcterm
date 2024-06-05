@@ -56,6 +56,7 @@ async function main() {
 			addr: "changethisusername@nine.testrun.org",
 			mail_pw: "SETTHISPASSWORD",
 			bot: "1",
+			webxdc_realtime_enabled: "1",
 		});
 		await dc.rpc.configure(accountId);
 	}
