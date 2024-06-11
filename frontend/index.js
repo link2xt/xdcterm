@@ -1,6 +1,12 @@
 import { Terminal } from "@xterm/xterm";
+import { ImageAddon, IImageAddonOptions } from '@xterm/addon-image';
 
-const term = new Terminal();
+const term = new Terminal({
+	cols: 80,
+	rows: 30
+});
+const imageAddon = new ImageAddon({sixelSupport: true});
+term.loadAddon(imageAddon);
 
 document.title = "Hi!";
 term.onData((send) => {
