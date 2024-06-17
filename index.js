@@ -1,6 +1,7 @@
 import { C } from "@deltachat/jsonrpc-client";
 import { startDeltaChat } from "@deltachat/stdio-rpc-server";
 import * as pty from "node-pty";
+import { PassThrough } from "node:stream";
 
 // Map from msgId to PTY process.
 const ptys = {};
@@ -12,18 +13,30 @@ function spawnPty(dc, accountId, msgId) {
 		cols: 80,
 		rows: 30,
 	});
+
+	const pass = new PassThrough();
+
+	// Single async loop to ensure there is only one `sendWebxdcRealtimeData` call at a time.
+	(async () => {
+		for await (const chunk of pass) {
+			await dc.rpc.sendWebxdcRealtimeData(
+				accountId,
+				msgId,
+				[0x4f].concat(Array.from(chunk)),
+			);
+		}
+		// 'E' = exit
+		await dc.rpc.sendWebxdcRealtimeData(accountId, msgId, [0x45])
+		pass.destroy();
+	})();
+
 	ptyProcess.onData(async (data) => {
 		const encoder = new TextEncoder();
 		const encoded = encoder.encode(data);
-		await dc.rpc.sendWebxdcRealtimeData(
-			accountId,
-			msgId,
-			[0x4f].concat(Array.from(encoded)),
-		);
+		pass.write(encoded);
 	});
-	ptyProcess.onExit(async () => {
-		// 'E' = exit
-		await dc.rpc.sendWebxdcRealtimeData(accountId, msgId, [0x45])
+	ptyProcess.onExit(() => {
+		pass.end();
 	});
 
 	ptys[msgId] = ptyProcess;
