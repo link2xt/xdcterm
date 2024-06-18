@@ -42,6 +42,16 @@ function spawnPty(dc, accountId, msgId) {
 	ptys[msgId] = ptyProcess;
 }
 
+async function sendWebxdc(dc, accountId, chatId) {
+	const chat = await dc.rpc.getBasicChatInfo(accountId, chatId);
+	const webxdcMsgId = await dc.rpc.sendMsg(accountId, chatId, {
+		text: "hi",
+		file: "frontend/dist-release/xdcterm.xdc",
+	});
+	await dc.rpc.sendWebxdcRealtimeAdvertisement(accountId, webxdcMsgId);
+	spawnPty(dc, accountId, webxdcMsgId);
+}
+
 async function main() {
 	const dc = await startDeltaChat("deltachat-data", {});
 	dc.on("Info", (accountId, { msg }) =>
@@ -74,15 +84,29 @@ async function main() {
 		await dc.rpc.configure(accountId);
 	}
 
+	let xdctermChatId = await dc.rpc.getConfig(accountId, "ui.xdcterm_chat_id");
+	if (xdctermChatId === null) {
+		// Create new protected chat.
+		const protect = true;
+		xdctermChatId = await dc.rpc.createGroupChat(accountId, "XDCTerm", protect);
+		await dc.rpc.setConfig(accountId, "ui.xdcterm_chat_id", String(xdctermChatId));
+	}
+	xdctermChatId = Number(xdctermChatId);
+
+	// Make sure the chat is promoted.
+	const xdctermChatInfo = await dc.rpc.getBasicChatInfo(accountId, xdctermChatId);
+	if (xdctermChatInfo.isUnpromoted) {
+		await dc.rpc.miscSendTextMessage(accountId, xdctermChatId, "Hello");
+	}
+
+	const qrCode = (await dc.rpc.getChatSecurejoinQrCodeSvg(accountId, xdctermChatId))[0];
+	console.log(`Chat invitation: ${qrCode}`);
+
 	const emitter = dc.getContextEvents(accountId);
 	emitter.on("IncomingMsg", async ({ chatId, msgId }) => {
-		const chat = await dc.rpc.getBasicChatInfo(accountId, chatId);
-		const webxdcMsgId = await dc.rpc.sendMsg(accountId, chatId, {
-			text: "hi",
-			file: "frontend/dist-release/xdcterm.xdc",
-		});
-		await dc.rpc.sendWebxdcRealtimeAdvertisement(accountId, webxdcMsgId);
-		spawnPty(dc, accountId, webxdcMsgId);
+		if (chatId === xdctermChatId) {
+			await sendWebxdc(dc, accountId, chatId);
+		}
 	});
 	emitter.on("WebxdcRealtimeData", async ({ msgId, data }) => {
 		const binData = Uint8Array.from(data);
