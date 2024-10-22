@@ -1,20 +1,20 @@
 {
-	"name": "backend",
-	"version": "1.0.0",
-	"description": "Bot for WebXDC terminal",
-	"main": "index.js",
-	"scripts": {
-		"start": "node .",
-		"check": "npx @biomejs/biome check frontend/index.js index.js"
-	},
-	"type": "module",
-	"author": "",
-	"dependencies": {
-		"@deltachat/jsonrpc-client": "^1.139.2",
-		"@deltachat/stdio-rpc-server": "^1.139.2",
-		"node-pty": "^1.0.0"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.7.3"
-	}
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Bot for WebXDC terminal",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "check": "npx @biomejs/biome check frontend/index.js index.js"
+  },
+  "type": "module",
+  "author": "",
+  "dependencies": {
+    "@deltachat/jsonrpc-client": "^1.139.2",
+    "@deltachat/stdio-rpc-server": "^1.139.2",
+    "node-pty": "^1.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.7.3"
+  }
 }
