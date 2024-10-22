@@ -30,7 +30,7 @@ function spawnPty(dc, accountId, msgId) {
     pass.destroy();
   })();
 
-  ptyProcess.onData(async (data) => {
+  ptyProcess.onData((data) => {
     const encoder = new TextEncoder();
     const encoded = encoder.encode(data);
     pass.write(encoded);
@@ -43,7 +43,6 @@ function spawnPty(dc, accountId, msgId) {
 }
 
 async function sendWebxdc(dc, accountId, chatId) {
-  const chat = await dc.rpc.getBasicChatInfo(accountId, chatId);
   const webxdcMsgId = await dc.rpc.sendMsg(accountId, chatId, {
     text: "hi",
     file: "frontend/dist-release/xdcterm.xdc",
@@ -119,7 +118,7 @@ async function main() {
       await sendWebxdc(dc, accountId, chatId);
     }
   });
-  emitter.on("WebxdcRealtimeData", async ({ msgId, data }) => {
+  emitter.on("WebxdcRealtimeData", ({ msgId, data }) => {
     const binData = Uint8Array.from(data);
     if (binData[0] == 0x49) {
       // 0x49 = 'I' = INPUT
