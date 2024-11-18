@@ -1,12 +1,41 @@
-# XDCTerm
+# XDCTerm Demo
 
 Terminal emulator WebXDC connected to pseudoterminal over realtime channel.
 
+NOTE: this is not meant for production use but as a technology demo.
+Use at your own risk.
+
 ## Building
 
-To build frontend WebXDC,
-run `npm install` and `npm run build`
-inside the `frontend` directory.
-This step builds `frontend/dist-release/xdcterm.xdc`.
+Perform the following steps to build the frontend webxdc app:
 
-Then run `npm install` and `npm start`.
+    cd frontend
+    npm install
+    npm run build
+
+This will build `frontend/dist-release/xdcterm.xdc`.
+
+Then go back to the root repository and do the following:
+
+- modify the `email_addr` and `email_password` in `index.js`
+  to use a new email address (chatmail servers provide these for free)
+
+- run the chat bot from the root repository directoy:
+
+    npm install
+    npm start
+
+  and copy the "OPENPGP4FPR:" URL into your clipboard
+
+- Got to a Delta chat app and the "QR" code scanning activity
+  and use "paste from clipboard"
+
+- wait for Delta Chat to successfully create an end-to-end encrypted
+  chat with the bot
+
+- say "hi" to the bot and click the returned "XDCTerm" frontend app
+
+- start typing into the terminal
+
+
+
