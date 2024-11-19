@@ -17,9 +17,6 @@ This will build `frontend/dist-release/xdcterm.xdc`.
 
 Then go back to the root repository and do the following:
 
-- modify the `email_addr` and `email_password` in `index.js`
-  to use a new email address (chatmail servers provide these for free)
-
 - run the chat bot from the root repository directoy:
 
     npm install

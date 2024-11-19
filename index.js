@@ -77,9 +77,13 @@ async function main() {
   }
 
   if (!(await dc.rpc.isConfigured(accountId))) {
+    const response = await fetch("https://nine.testrun.org/new", {
+      method: "POST",
+    });
+    const body = await response.json();
     await dc.rpc.batchSetConfig(accountId, {
-      addr: "changethisusername@nine.testrun.org",
-      mail_pw: "SETTHISPASSWORD",
+      addr: body.email,
+      mail_pw: body.password,
       bot: "1",
       webxdc_realtime_enabled: "1",
     });
