@@ -132,6 +132,21 @@ async function main() {
       console.log("Ignoring incoming data that is not input.");
     }
   });
+  emitter.on("WebxdcRealtimeAdvertisementReceived", async ({ msgId }) => {
+    if (!(msgId in ptys)) {
+      console.log(`Someone want to join XDC ${msgId}`);
+      const message = await dc.rpc.getMessage(accountId, msgId);
+      if (message.fromId == C.DC_CONTACT_ID_SELF) {
+        // TODO check if the chat is protected.
+        // We should also somehow ensure that advertisement
+        // is signed by verified contact in the core,
+        // not sure if it is guaranteed.
+        await dc.rpc.sendWebxdcRealtimeAdvertisement(accountId, msgId);
+        spawnPty(dc, accountId, msgId);
+        console.log(`Spawning PTY for ${msgId}`);
+      }
+    }
+  });
 
   await dc.rpc.startIo(accountId);
 }
